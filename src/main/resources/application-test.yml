@@ -1,0 +1,12 @@
+spring:
+  flyway:
+    enabled: true
+
+app:
+  jwt:
+    issuer: platform-auth-service
+    secret: "test-secret-key-for-testing-only-32chars"
+
+management:
+  tracing:
+    enabled: false

@@ -1,0 +1,77 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/notification_db
+    username: notification_user
+    password: notification_pass
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  application:
+    name: platform-notification-service
+
+  flyway:
+    enabled: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
+
+app:
+  jwt:
+    issuer: platform-auth-service
+    secret: "ilovesoftwareisaythroughgrittedteeth"
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      application: platform-notification-service
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        http.server.requests: 50ms,100ms,250ms,500ms,1s,2s
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://platform-tempo:4318/v1/traces
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+    com.stackdarker: DEBUG
+    root: INFO
+  pattern:
+    level: "%5p [traceId=%X{traceId:-} spanId=%X{spanId:-} requestId=%X{requestId:-} userId=%X{userId:-}]"
